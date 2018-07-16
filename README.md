@@ -39,3 +39,5 @@ unfortunately, that the procedure is no longer generic. Instead, you need to
 modify the webRTC applications and libraries to use the SAM Bridge to establish
 connections over i2p instead.
 
+Frankly, I'm having a little trouble being clear when I'm talking about making
+a peer-to-peer connection where both peers are you. It's going to work though.
