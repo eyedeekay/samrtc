@@ -25,7 +25,7 @@ type SamRTCServer struct {
 	whitelist []string
 }
 
-//Serve
+//Serve a the specified SAM port on an i2p destination
 func (s *SamRTCServer) Serve() error {
 	var err error
 	s.connection, err = s.publishListen.Accept()
@@ -33,6 +33,15 @@ func (s *SamRTCServer) Serve() error {
 		return err
 	}
 	return err
+}
+
+//GetServerAddresses returns the base64 and base32 addresses of the server
+func (s *SamRTCServer) GetServerAddresses() (string, string) {
+	return s.samKeys.Addr().Base64(), s.samKeys.Addr().Base32()
+}
+
+func (s *SamRTCServer) AddWhitelistDestination(dest string) error {
+    return nil
 }
 
 func (s *SamRTCServer) getWhitelist() string {
@@ -43,19 +52,18 @@ func (s *SamRTCServer) getWhitelist() string {
 	return strings.TrimSuffix(list, ",")
 }
 
-func (s *SamRTCServer) rtc_options() []string {
-	rtc_options := []string{
+func (s *SamRTCServer) rtcOptions() []string {
+	rtcOptions := []string{
 		"inbound.length=0", "outbound.length=0",
-        "inbound.allowZeroHop=true", "outbound.allowZeroHop=true",
+		"inbound.allowZeroHop=true", "outbound.allowZeroHop=true",
 		"inbound.lengthVariance=0", "outbound.lengthVariance=0",
 		"inbound.backupQuantity=4", "outbound.backupQuantity=4",
 		"inbound.quantity=15", "outbound.quantity=15",
-        "i2cp.reduceIdleTime=300000", "i2cp.reduceOnIdle=true", "i2cp.reduceQuantity=2",
-        "i2cp.closeOnIdle=true", "i2cp.closeIdleTime=1200000",
-        "i2cp.encryptLeaseSet=true",
-		"i2cp.enableAccessList=true", s.getWhitelist(),
+		"i2cp.reduceIdleTime=300000", "i2cp.reduceOnIdle=true", "i2cp.reduceQuantity=2",
+		"i2cp.closeOnIdle=true", "i2cp.closeIdleTime=1200000",
+		"i2cp.encryptLeaseSet=true", "i2cp.enableAccessList=true", s.getWhitelist(),
 	}
-	return rtc_options
+	return rtcOptions
 }
 
 func (s *SamRTCServer) samAddress() string {
@@ -85,7 +93,7 @@ func NewSamRTCServerFromOptions(opts ...func(*SamRTCServer) error) (*SamRTCServe
 	if s.samKeys, err = s.samConn.NewKeys(); err != nil {
 		return nil, err
 	}
-	if s.publishStream, err = s.samConn.NewStreamSession("serverTun", s.samKeys, s.rtc_options()); err != nil {
+	if s.publishStream, err = s.samConn.NewStreamSession("serverTun", s.samKeys, s.rtcOptions()); err != nil {
 		return nil, err
 	}
 	if s.publishListen, err = s.publishStream.Listen(); err != nil {
