@@ -1,6 +1,7 @@
 package samrtc
 
 import (
+    "fmt"
 	"net"
 	"strings"
 )
@@ -41,13 +42,19 @@ func (s *SamRTCServer) GetServerAddresses() (string, string) {
 }
 
 func (s *SamRTCServer) AddWhitelistDestination(dest string) error {
+    for _, w := range s.whitelist {
+        if w == dest {
+            return fmt.Errorf("Destination already exists on whitelist: %s", dest)
+        }
+    }
+    s.whitelist = append(s.whitelist, dest)
     return nil
 }
 
 func (s *SamRTCServer) getWhitelist() string {
 	list := "i2cp.accessList="
-	for _, s := range s.whitelist {
-		list += s + ","
+	for _, w := range s.whitelist {
+		list += w + ","
 	}
 	return strings.TrimSuffix(list, ",")
 }
