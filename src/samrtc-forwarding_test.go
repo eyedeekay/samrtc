@@ -49,7 +49,7 @@ func TestCreateSamHTTPOptionsSetSamWhitelist(t *testing.T) {
 }
 
 func TestNewSamRTC(t *testing.T) {
-	samrtc, err := NewSamRTCServer()
+	samrtc, err := NewSamRTCServerFromOptions(SetSamVerbose(true))
 	if err != nil {
 		t.Fatal(err.Error())
 	}

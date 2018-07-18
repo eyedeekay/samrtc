@@ -33,11 +33,12 @@ type SamRTCServer struct {
 //Serve a the specified SAM port on an i2p destination
 func (s *SamRTCServer) Serve() error {
 	var err error
-    s.Log("")
+    s.Log("Starting server:")
 	s.connection, err = s.publishListen.Accept()
 	if err != nil {
 		return err
 	}
+    s.Log("Server started.")
 	return err
 }
 
