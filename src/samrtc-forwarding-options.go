@@ -16,6 +16,14 @@ func SetSamHost(s string) func(*SamRTCServer) error {
 	}
 }
 
+//SetSamTunName sets the host of the client's SAM bridge
+func SetSamTunName(s string) func(*SamRTCServer) error {
+	return func(c *SamRTCServer) error {
+		c.tunName = s
+		return nil
+	}
+}
+
 //SetSamPort sets the port of the client's SAM bridge
 func SetSamPort(v string) func(*SamRTCServer) error {
 	return func(c *SamRTCServer) error {
@@ -51,6 +59,14 @@ func SetSamWhitelist(s string) func(*SamRTCServer) error {
 			}
 		}
 		c.whitelist = append(c.whitelist, s)
+		return nil
+	}
+}
+
+//SetSamVerbose sets the verbosity of the server
+func SetSamVerbose(b bool) func(*SamRTCServer) error {
+	return func(c *SamRTCServer) error {
+		c.verbose = b
 		return nil
 	}
 }

@@ -3,6 +3,7 @@ package main
 import (
     "flag"
     "log"
+    "strings"
     ".."
 )
 
@@ -10,7 +11,7 @@ type arrayFlags []string
 
 func (i *arrayFlags) String() string {
     var r string
-    for _, s := range i {
+    for _, s := range *i {
         r += s + ","
     }
 	return strings.TrimSuffix(r, ",")
@@ -27,7 +28,7 @@ func main(){
 		"host: of the SAM bridge")
 	samPortString := flag.String("bridge-port", "7656",
 		":port of the SAM bridge")
-    flag.Var(&subscriptions, "subs", "Subscription URL(Can be specified multiple times)")
+    flag.Var(&whitelistAddrs, "subs", "Subscription URL(Can be specified multiple times)")
     flag.Parse()
 
     if samForwarder, err := samrtc.NewSamRTCServerFromOptions(

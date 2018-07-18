@@ -16,6 +16,9 @@ import (
 type SamRTCServer struct {
 	samHost string
 	samPort string
+    tunName string
+
+    verbose bool
 
 	samConn *sam3.SAM
 	samKeys sam3.I2PKeys
@@ -30,6 +33,7 @@ type SamRTCServer struct {
 //Serve a the specified SAM port on an i2p destination
 func (s *SamRTCServer) Serve() error {
 	var err error
+    s.Log("")
 	s.connection, err = s.publishListen.Accept()
 	if err != nil {
 		return err
@@ -90,6 +94,8 @@ func NewSamRTCServerFromOptions(opts ...func(*SamRTCServer) error) (*SamRTCServe
 	var s SamRTCServer
 	s.samHost = "127.0.0.1"
 	s.samPort = "7656"
+    s.tunName = "serverTun"
+    s.verbose = false
 	for _, o := range opts {
 		if err := o(&s); err != nil {
 			return &s, err
@@ -98,18 +104,25 @@ func NewSamRTCServerFromOptions(opts ...func(*SamRTCServer) error) (*SamRTCServe
 	if s.samConn, err = sam3.NewSAM(s.samAddress()); err != nil {
 		return nil, err
 	}
-	log.Println("SAM Bridge connection established")
+	s.Log("SAM Bridge connection established")
 	if s.samKeys, err = s.samConn.NewKeys(); err != nil {
 		return nil, err
 	}
-	log.Println("Destination keys generated")
-	if s.publishStream, err = s.samConn.NewStreamSession("serverTun", s.samKeys, s.rtcOptions()); err != nil {
+	s.Log("Destination keys generated, tunnel name:", s.tunName)
+	if s.publishStream, err = s.samConn.NewStreamSession(s.tunName, s.samKeys, s.rtcOptions()); err != nil {
 		return nil, err
 	}
-	log.Println("Stream session established")
+	s.Log("Stream session established")
 	if s.publishListen, err = s.publishStream.Listen(); err != nil {
 		return nil, err
 	}
-	log.Println("Listener created")
+	s.Log("Listener created")
+    log.Println(s.GetServerAddresses())
 	return &s, nil
+}
+
+func (s *SamRTCServer) Log(i ...interface{}){
+    if s.verbose == true {
+        log.Println(i...)
+    }
 }
