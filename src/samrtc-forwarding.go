@@ -46,9 +46,13 @@ func (s *SamRTCServer) getWhitelist() string {
 func (s *SamRTCServer) rtc_options() []string {
 	rtc_options := []string{
 		"inbound.length=0", "outbound.length=0",
+        "inbound.allowZeroHop=true", "outbound.allowZeroHop=true",
 		"inbound.lengthVariance=0", "outbound.lengthVariance=0",
 		"inbound.backupQuantity=4", "outbound.backupQuantity=4",
 		"inbound.quantity=15", "outbound.quantity=15",
+        "i2cp.reduceIdleTime=300000", "i2cp.reduceOnIdle=true", "i2cp.reduceQuantity=2",
+        "i2cp.closeOnIdle=true", "i2cp.closeIdleTime=1200000",
+        "i2cp.encryptLeaseSet=true",
 		"i2cp.enableAccessList=true", s.getWhitelist(),
 	}
 	return rtc_options

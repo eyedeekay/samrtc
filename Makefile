@@ -11,4 +11,4 @@ build:
 	cd src/main && go build -o "$(PWD)/bin/samrtc"
 
 clean:
-	rm "$(PWD)/bin/samrtc"
+	rm -f "$(PWD)/bin/samrtc"
