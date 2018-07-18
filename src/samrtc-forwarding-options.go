@@ -6,7 +6,6 @@ import (
 	//"time"
 )
 
-
 //Option is a SamRTCServer option
 type Option func(*SamRTCServer) error
 

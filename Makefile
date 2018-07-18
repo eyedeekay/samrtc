@@ -9,7 +9,16 @@ build:
 
 noopts: build
 
-test:
+fmt:
+	gofmt -w src/*.go
+
+lint:
+	golint src/*.go
+
+vet:
+	go vet src/*.go
+
+test: fmt lint vet
 	cd src && go test
 
 clean:

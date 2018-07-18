@@ -16,9 +16,9 @@ import (
 type SamRTCServer struct {
 	samHost string
 	samPort string
-    tunName string
+	tunName string
 
-    verbose bool
+	verbose bool
 
 	samConn *sam3.SAM
 	samKeys sam3.I2PKeys
@@ -31,15 +31,23 @@ type SamRTCServer struct {
 }
 
 //Serve a the specified SAM port on an i2p destination
-func (s *SamRTCServer) Serve() error {
+func (s *SamRTCServer) Serve(whitelist ...string) error {
+	if len(whitelist) > 0 {
+		for _, x := range whitelist {
+			s.AddWhitelistDestination(x)
+		}
+	}
 	var err error
-    _, base32 := s.GetServerAddresses()
-    s.Log("Starting server:", s.tunName+":", base32)
+	if err = s.checkWhitelist(); err != nil {
+		log.Fatal(err.Error())
+	}
+	_, base32 := s.GetServerAddresses()
+	s.Log("Starting server:", s.tunName+":", base32)
 	s.connection, err = s.publishListen.Accept()
 	if err != nil {
 		return err
 	}
-    s.Log("Server started.")
+	s.Log("Server started.")
 	return err
 }
 
@@ -67,6 +75,21 @@ func (s *SamRTCServer) getWhitelist() string {
 	return strings.TrimSuffix(list, ",")
 }
 
+func (s *SamRTCServer) checkWhitelist() error {
+	if len(s.whitelist) < 1 {
+		return fmt.Errorf("Never run without a whitelist member %x", len(s.whitelist))
+	}
+	for i, s := range s.whitelist {
+		if len(s) <= 1 {
+			if i <= 0 {
+				return fmt.Errorf("Whitelist member failed trivial validation, string of length %x detected at index %x", len(s), i)
+			}
+			break
+		}
+	}
+	return nil
+}
+
 func (s *SamRTCServer) rtcOptions() []string {
 	rtcOptions := []string{
 		"inbound.length=0", "outbound.length=0",
@@ -75,7 +98,7 @@ func (s *SamRTCServer) rtcOptions() []string {
 		"inbound.backupQuantity=4", "outbound.backupQuantity=4",
 		"inbound.quantity=15", "outbound.quantity=15",
 		"i2cp.reduceIdleTime=300000", "i2cp.reduceOnIdle=true", "i2cp.reduceQuantity=2",
-		"i2cp.closeOnIdle=true", "i2cp.closeIdleTime=1200000",
+		"i2cp.closeIdleTime=1200000", "i2cp.closeOnIdle=true",
 		"i2cp.encryptLeaseSet=true", "i2cp.enableAccessList=true", s.getWhitelist(),
 	}
 	return rtcOptions
@@ -97,8 +120,8 @@ func NewSamRTCServerFromOptions(opts ...func(*SamRTCServer) error) (*SamRTCServe
 	var s SamRTCServer
 	s.samHost = "127.0.0.1"
 	s.samPort = "7656"
-    s.tunName = "serverTun"
-    s.verbose = false
+	s.tunName = "serverTun"
+	s.verbose = false
 	for _, o := range opts {
 		if err := o(&s); err != nil {
 			return &s, err
@@ -120,13 +143,13 @@ func NewSamRTCServerFromOptions(opts ...func(*SamRTCServer) error) (*SamRTCServe
 		return nil, err
 	}
 	s.Log("Listener created")
-    log.Println(s.GetServerAddresses())
+	log.Println(s.GetServerAddresses())
 	return &s, nil
 }
 
 //Log outputs only if verbose==true
-func (s *SamRTCServer) Log(i ...interface{}){
-    if s.verbose == true {
-        log.Println(i...)
-    }
+func (s *SamRTCServer) Log(i ...interface{}) {
+	if s.verbose == true {
+		log.Println(i...)
+	}
 }
