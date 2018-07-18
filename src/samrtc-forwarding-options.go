@@ -6,6 +6,8 @@ import (
 	//"time"
 )
 
+
+//Option is a SamRTCServer option
 type Option func(*SamRTCServer) error
 
 //SetSamHost sets the host of the client's SAM bridge

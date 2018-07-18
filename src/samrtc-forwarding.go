@@ -48,6 +48,7 @@ func (s *SamRTCServer) GetServerAddresses() (string, string) {
 	return s.samKeys.Addr().Base64(), s.samKeys.Addr().Base32()
 }
 
+//AddWhitelistDestination adds a client destination to the server whitelist
 func (s *SamRTCServer) AddWhitelistDestination(dest string) error {
 	for _, w := range s.whitelist {
 		if w == dest {
@@ -123,6 +124,7 @@ func NewSamRTCServerFromOptions(opts ...func(*SamRTCServer) error) (*SamRTCServe
 	return &s, nil
 }
 
+//Log outputs only if verbose==true
 func (s *SamRTCServer) Log(i ...interface{}){
     if s.verbose == true {
         log.Println(i...)
