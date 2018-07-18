@@ -5,7 +5,7 @@ import (
 )
 
 func TestCreateSamHTTPOptionsSetSamHost(t *testing.T) {
-	h, e := NewSamRTCServerFromOptions(
+	_, e := NewSamRTCServerFromOptions(
 		SetSamHost("127.0.0.1"),
 	)
 	if e != nil {
@@ -14,7 +14,7 @@ func TestCreateSamHTTPOptionsSetSamHost(t *testing.T) {
 }
 
 func TestCreateSamHTTPOptionsSetSamPort(t *testing.T) {
-	h, e := NewSamRTCServerFromOptions(
+	_, e := NewSamRTCServerFromOptions(
 		SetSamPort("7656"),
 	)
 	if e != nil {
@@ -23,7 +23,7 @@ func TestCreateSamHTTPOptionsSetSamPort(t *testing.T) {
 }
 
 func TestCreateSamHTTPOptionsSetSamPortInt(t *testing.T) {
-	h, e := NewSamRTCServerFromOptions(
+	_, e := NewSamRTCServerFromOptions(
 		SetSamPortInt(7656),
 	)
 	if e != nil {
@@ -32,7 +32,7 @@ func TestCreateSamHTTPOptionsSetSamPortInt(t *testing.T) {
 }
 
 func TestCreateSamHTTPOptionsSetSamWhitelist(t *testing.T) {
-	h, e := NewSamRTCServerFromOptions(
+	_, e := NewSamRTCServerFromOptions(
 		SetSamWhitelist("THISISNOTAREALDESTINATIONBUTABASE64WOULDNOTMALLYGOHERE"),
 	)
 	if e != nil {
