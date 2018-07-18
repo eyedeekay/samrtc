@@ -45,12 +45,12 @@ func SetSamPortInt(v int) func(*SamRTCServer) error {
 //SetSamWhitelist adds a destination to the samRTC Whitelist.
 func SetSamWhitelist(s string) func(*SamRTCServer) error {
 	return func(c *SamRTCServer) error {
-        for _, w := range c.whitelist {
-            if w == s {
-                return fmt.Errorf("Destination already exists on whitelist: %s", s)
-            }
-        }
-        c.whitelist = append(c.whitelist, s)
-        return nil
-    }
+		for _, w := range c.whitelist {
+			if w == s {
+				return fmt.Errorf("Destination already exists on whitelist: %s", s)
+			}
+		}
+		c.whitelist = append(c.whitelist, s)
+		return nil
+	}
 }

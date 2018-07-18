@@ -4,14 +4,6 @@ import (
 	"testing"
 )
 
-func TestNewSamRTC(t *testing.T) {
-	samrtc, err := NewSamRTCServer()
-	if err != nil {
-		t.Fatal(err.Error())
-	}
-	samrtc.Serve()
-}
-
 func TestCreateSamHTTPOptionsSetSamHost(t *testing.T) {
 	h, e := NewSamRTCServerFromOptions(
 		SetSamHost("127.0.0.1"),
@@ -19,7 +11,7 @@ func TestCreateSamHTTPOptionsSetSamHost(t *testing.T) {
 	if e != nil {
 		t.Fatal("sam-http-options_test.go Host setting error")
 	}
-	h.CleanupClient()
+
 }
 
 func TestCreateSamHTTPOptionsSetSamPort(t *testing.T) {
@@ -29,7 +21,7 @@ func TestCreateSamHTTPOptionsSetSamPort(t *testing.T) {
 	if e != nil {
 		t.Fatal("sam-http-options_test.go Port setting error from String")
 	}
-	h.CleanupClient()
+
 }
 
 func TestCreateSamHTTPOptionsSetSamPortInt(t *testing.T) {
@@ -37,9 +29,9 @@ func TestCreateSamHTTPOptionsSetSamPortInt(t *testing.T) {
 		SetSamPortInt(7656),
 	)
 	if e != nil {
-        t.Fatal("sam-http-options_test.go Port setting error from Int")
+		t.Fatal("sam-http-options_test.go Port setting error from Int")
 	}
-	h.CleanupClient()
+
 }
 
 func TestCreateSamHTTPOptionsSetSamWhitelist(t *testing.T) {
@@ -49,5 +41,13 @@ func TestCreateSamHTTPOptionsSetSamWhitelist(t *testing.T) {
 	if e != nil {
 		t.Fatal("sam-http-options_test.go Port setting error from String")
 	}
-	h.CleanupClient()
+
+}
+
+func TestNewSamRTC(t *testing.T) {
+	samrtc, err := NewSamRTCServer()
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	samrtc.Serve()
 }

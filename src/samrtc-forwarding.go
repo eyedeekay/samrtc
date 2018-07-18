@@ -1,8 +1,8 @@
 package samrtc
 
 import (
-    "fmt"
-    "log"
+	"fmt"
+	"log"
 	"net"
 	"strings"
 )
@@ -43,13 +43,13 @@ func (s *SamRTCServer) GetServerAddresses() (string, string) {
 }
 
 func (s *SamRTCServer) AddWhitelistDestination(dest string) error {
-    for _, w := range s.whitelist {
-        if w == dest {
-            return fmt.Errorf("Destination already exists on whitelist: %s", dest)
-        }
-    }
-    s.whitelist = append(s.whitelist, dest)
-    return nil
+	for _, w := range s.whitelist {
+		if w == dest {
+			return fmt.Errorf("Destination already exists on whitelist: %s", dest)
+		}
+	}
+	s.whitelist = append(s.whitelist, dest)
+	return nil
 }
 
 func (s *SamRTCServer) getWhitelist() string {
@@ -98,18 +98,18 @@ func NewSamRTCServerFromOptions(opts ...func(*SamRTCServer) error) (*SamRTCServe
 	if s.samConn, err = sam3.NewSAM(s.samAddress()); err != nil {
 		return nil, err
 	}
-    log.Println("SAM Bridge connection established")
+	log.Println("SAM Bridge connection established")
 	if s.samKeys, err = s.samConn.NewKeys(); err != nil {
 		return nil, err
 	}
-    log.Println("Destination keys generated")
+	log.Println("Destination keys generated")
 	if s.publishStream, err = s.samConn.NewStreamSession("serverTun", s.samKeys, s.rtcOptions()); err != nil {
 		return nil, err
 	}
-    log.Println("Stream session established")
+	log.Println("Stream session established")
 	if s.publishListen, err = s.publishStream.Listen(); err != nil {
 		return nil, err
 	}
-    log.Println("Listener created")
+	log.Println("Listener created")
 	return &s, nil
 }
