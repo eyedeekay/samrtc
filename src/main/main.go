@@ -24,16 +24,20 @@ func (i *arrayFlags) Set(value string) error {
 
 func main(){
     var whitelistAddrs arrayFlags
-    samAddrString := flag.String("bridge-addr", "127.0.0.1",
+    samAddrString := flag.String("addr", "127.0.0.1",
 		"host: of the SAM bridge")
-	samPortString := flag.String("bridge-port", "7656",
+	samPortString := flag.String("port", "7656",
 		":port of the SAM bridge")
-    flag.Var(&whitelistAddrs, "subs", "Subscription URL(Can be specified multiple times)")
+    samTunName := flag.String("name", "serverTun",
+		":port of the SAM bridge")
+    flag.Var(&whitelistAddrs, "addrs", "Subscription URL(Can be specified multiple times)")
     flag.Parse()
 
     if samForwarder, err := samrtc.NewSamRTCServerFromOptions(
         samrtc.SetSamHost(*samAddrString),
         samrtc.SetSamPort(*samPortString),
+        samrtc.SetSamTunName(*samTunName),
+        samrtc.SetSamWhitelist(whitelistAddrs.String()),
         ); err != nil {
             log.Fatal(err.Error())
     }else{
