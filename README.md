@@ -1,4 +1,4 @@
-# samrtc, or, How I stopped worrying and am making WebTorrent work over i2p without asking permission.
+# samrtc(Experiments with making webRTC applications use the SAM bridge, in particular WebTorrent)
 
 **HIGHLY EXPERIMENTAL. IF I MAKE A MISTAKE SECURING THIS APPLICATION, I COULD**
 **ACCIDENTALLY EXPOSE YOUR SAM PORT TO THE WHOLE I2P NETWORK. IF SOMEONE FINDS**
@@ -7,11 +7,8 @@
 **UNTIL DESTINATION WHITELISTING IS IMPLEMENTED COMPLETELY, WITH 100% TEST**
 **COVERAGE AND LOTS OF DOGFOODING BY ME.** That said, I can't stop you.
 
-Enable webRTC on i2p. Create a tunnel to your own SAM port over i2p with
-whitelisting for the local destination. DANGER: Of all the potentially stupid
-things I have done with i2p, this is probably the most risky. It might also be
-unnecessary, but if I'm right about the security of most browsers people attach
-to i2p, then it might be a good idea.
+Enable WebTorrent on i2p. Create a tunnel to your own SAM port over i2p with
+whitelisting for the local destination.
 
 First of all, sure, it's possible to proxy WebRTC over a regular SOCKS proxy or
 whatever. But when it comes to the more interesting WebRTC applications, it
@@ -21,23 +18,47 @@ I think, would be to make it possible for WebRTC Applications to use the safer
 i2p API's like the SAM port to make connections. But the obvious problem
 arises, when in a properly configured browser, unproxied connections to the
 localhost are disabled, which means that javascript in the browser can't talk
-to the SAM port directly, and that's the right thing to do. So, how do we
-make it possible for our browser, and **only** our browser, to talk to our SAM
-port, and **only** our SAM port? Using the SAM bridge to forward the
-connection, over i2p, using a 0-hop tunnel for the SAM port service with
-destination whitelisting for the local http proxy. That way, your SAM bridge is
-just a really fast service you can access via a .b32 address, which will
-disallow any connection that doesn't originate from your i2p http proxy. But I
-think I can still do better. In my [destination-isolation](https://github.com/eyedeekay/si-i2p-plugin)
-project, I establish browser connections over the SAM bridge as well. It could
-be used to allow the client connection to the SAM port over i2p to use zero
-hops. This will allow you to access your local SAM port, via an i2p destination,
-that only corresponds to the local port intended to access the SAM port.
+to the SAM port directly, and that's the right thing to do. Otherwise, one could
+be attacked by making requests for resources from local services.
+
+So, how do we make it possible for our browser, and **only** our browser, to
+talk to our SAM port, and **only** our SAM port? Well, we could forward the SAM
+port to an i2p destination, with the destination of the proxy we're using
+as the only allowed connection, using the i2cp.accessList and
+i2cp.enableAccessList options. That would allow applications in the browser to
+connect to the SAM bridge using a .b32.i2p destination, which could be added to
+the local addressbook in a bunch of ways, I haven't decided yet, which would
+allow modified webRTC applications to use the SAM bridge to establish
+connections over i2p.
+
+What this application is intended to do is to automate the process of creating
+the zero-hop forwarding tunnel to the SAM port and an API for exchanging
+whitelist destination information. That way you have a fast tunnel leading back
+to your own SAM port that only you can talk to for youe webRTC-enabled
+applications to use safely, which would also use only direct connections to
+itself so it would be as fast as possible. I think a kind of attack here could
+be possible, because I don't want a WebTorrent application to be able to
+determine what i2cp and streaming library options to use. Those need to be set
+by the samrtc application, and some kind of sanitization is probably necessary.
+
+One thing I'm pretty sure you could also do if I'm successful is use Privoxy
+with two i2p proxy connections, one with your desired number of anonymous hops,
+and one with zero hops to use to connect to your own SAM destination. I'll put
+an example here as soon as I do one.
+
+In my [destination-isolation](https://github.com/eyedeekay/si-i2p-plugin)
+project, I establish browser connections over the SAM bridge as well. I plan
+to incorporate this into that application.
+
+## This diagram shows the basic idea
+
+                sam port+-->samrtc service+-->i2p network+{browser i2p tunnel talks to this destination}
+                                          |              |
+         (exchange destination whitelists)+              |{zero-hops tunnel}
+                                          |              |
+         browser +-->samrtc enabled client+-->i2p network+{WebTorrent client connects to this destination}
 
 The drawback, however, is it's only half of what you need. The other half is,
 unfortunately, that the procedure is no longer generic. Instead, you need to
 modify the webRTC applications and libraries to use the SAM Bridge to establish
 connections over i2p instead.
-
-Frankly, I'm having a little trouble being clear when I'm talking about making
-a peer-to-peer connection where both peers are you. It's going to work though.
