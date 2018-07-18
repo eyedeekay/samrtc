@@ -10,5 +10,7 @@ deps:
 build:
 	cd src/main && go build -o "$(PWD)/bin/samrtc"
 
+noopts: build
+
 clean:
 	rm -f "$(PWD)/bin/samrtc"

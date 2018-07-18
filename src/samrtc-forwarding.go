@@ -2,6 +2,7 @@ package samrtc
 
 import (
     "fmt"
+    "log"
 	"net"
 	"strings"
 )
@@ -97,14 +98,18 @@ func NewSamRTCServerFromOptions(opts ...func(*SamRTCServer) error) (*SamRTCServe
 	if s.samConn, err = sam3.NewSAM(s.samAddress()); err != nil {
 		return nil, err
 	}
+    log.Println("SAM Bridge connection established")
 	if s.samKeys, err = s.samConn.NewKeys(); err != nil {
 		return nil, err
 	}
+    log.Println("Destination keys generated")
 	if s.publishStream, err = s.samConn.NewStreamSession("serverTun", s.samKeys, s.rtcOptions()); err != nil {
 		return nil, err
 	}
+    log.Println("Stream session established")
 	if s.publishListen, err = s.publishStream.Listen(); err != nil {
 		return nil, err
 	}
+    log.Println("Listener created")
 	return &s, nil
 }
