@@ -10,6 +10,12 @@
 Enable WebTorrent on i2p. Create a tunnel to your own SAM port over i2p with
 whitelisting for the local destination.
 
+## Status
+
+It doesn't work yet.
+
+## About
+
 First of all, sure, it's possible to proxy WebRTC over a regular SOCKS proxy or
 whatever. But when it comes to the more interesting WebRTC applications, it
 appears to me that this approach would be very limiting. Many WebTorrent-based

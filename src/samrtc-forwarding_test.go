@@ -39,7 +39,7 @@ func TestCreateSamHTTPOptionsSetSamPortInt(t *testing.T) {
 
 func TestCreateSamHTTPOptionsSetSamWhitelist(t *testing.T) {
 	_, e := NewSamRTCServerFromOptions(
-		SetSamWhitelist("THISISNOTAREALDESTINATIONBUTABASE64WOULDNOTMALLYGOHERE"),
+		SetSamWhitelist("THISISNOTAREALDESTINATIONBUTABASE64WOULDNORMALLYGOHERE"),
         SetSamTunName("SamWhitelistTest"),
         SetSamVerbose(true),
 	)
