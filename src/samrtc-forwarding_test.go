@@ -11,3 +11,43 @@ func TestNewSamRTC(t *testing.T) {
 	}
 	samrtc.Serve()
 }
+
+func TestCreateSamHTTPOptionsSetSamHost(t *testing.T) {
+	h, e := NewSamRTCServerFromOptions(
+		SetSamHost("127.0.0.1"),
+	)
+	if e != nil {
+		t.Fatal("sam-http-options_test.go Host setting error")
+	}
+	h.CleanupClient()
+}
+
+func TestCreateSamHTTPOptionsSetSamPort(t *testing.T) {
+	h, e := NewSamRTCServerFromOptions(
+		SetSamPort("7656"),
+	)
+	if e != nil {
+		t.Fatal("sam-http-options_test.go Port setting error from String")
+	}
+	h.CleanupClient()
+}
+
+func TestCreateSamHTTPOptionsSetSamPortInt(t *testing.T) {
+	h, e := NewSamRTCServerFromOptions(
+		SetSamPortInt(7656),
+	)
+	if e != nil {
+        t.Fatal("sam-http-options_test.go Port setting error from Int")
+	}
+	h.CleanupClient()
+}
+
+func TestCreateSamHTTPOptionsSetSamWhitelist(t *testing.T) {
+	h, e := NewSamRTCServerFromOptions(
+		SetSamWhitelist("THISISNOTAREALDESTINATIONBUTABASE64WOULDNOTMALLYGOHERE"),
+	)
+	if e != nil {
+		t.Fatal("sam-http-options_test.go Port setting error from String")
+	}
+	h.CleanupClient()
+}
