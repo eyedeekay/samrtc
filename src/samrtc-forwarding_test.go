@@ -11,7 +11,6 @@ func TestCreateSamHTTPOptionsSetSamHost(t *testing.T) {
 	if e != nil {
 		t.Fatal("sam-http-options_test.go Host setting error")
 	}
-
 }
 
 func TestCreateSamHTTPOptionsSetSamPort(t *testing.T) {
@@ -21,7 +20,6 @@ func TestCreateSamHTTPOptionsSetSamPort(t *testing.T) {
 	if e != nil {
 		t.Fatal("sam-http-options_test.go Port setting error from String")
 	}
-
 }
 
 func TestCreateSamHTTPOptionsSetSamPortInt(t *testing.T) {
@@ -31,7 +29,6 @@ func TestCreateSamHTTPOptionsSetSamPortInt(t *testing.T) {
 	if e != nil {
 		t.Fatal("sam-http-options_test.go Port setting error from Int")
 	}
-
 }
 
 func TestCreateSamHTTPOptionsSetSamWhitelist(t *testing.T) {
@@ -41,7 +38,6 @@ func TestCreateSamHTTPOptionsSetSamWhitelist(t *testing.T) {
 	if e != nil {
 		t.Fatal("sam-http-options_test.go Port setting error from String")
 	}
-
 }
 
 func TestNewSamRTC(t *testing.T) {
