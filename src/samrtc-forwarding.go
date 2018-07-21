@@ -2,6 +2,7 @@ package samrtc
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"strings"
@@ -23,11 +24,32 @@ type SamRTCServer struct {
 	samConn *sam3.SAM
 	samKeys sam3.I2PKeys
 
-	publishStream *sam3.StreamSession
-	publishListen *sam3.StreamListener
-	connection    net.Conn
+	publishStream     *sam3.StreamSession
+	publishListen     *sam3.StreamListener
+	publishConnection net.Conn
+
+	localConnection net.Conn
 
 	whitelist []string
+}
+
+func (s *SamRTCServer) forward() error {
+	var err error
+	if s.localConnection, err = net.Dial("tcp", s.samAddress()); err != nil {
+		return err
+	}
+	s.Log("Dialed local SAM bridge for forwarding")
+	go func() {
+		defer s.localConnection.Close()
+		defer s.publishConnection.Close()
+		io.Copy(s.localConnection, s.publishConnection)
+	}()
+	go func() {
+		defer s.localConnection.Close()
+		defer s.publishConnection.Close()
+		io.Copy(s.publishConnection, s.localConnection)
+	}()
+	return nil
 }
 
 //Serve a the specified SAM port on an i2p destination
@@ -43,12 +65,14 @@ func (s *SamRTCServer) Serve(whitelist ...string) error {
 	}
 	_, base32 := s.GetServerAddresses()
 	s.Log("Starting server:", s.tunName+":", base32)
-	s.connection, err = s.publishListen.Accept()
+	s.publishConnection, err = s.publishListen.Accept()
 	if err != nil {
 		return err
 	}
 	s.Log("Server started.")
-	return err
+    for {
+        go s.forward()
+    }
 }
 
 //GetServerAddresses returns the base64 and base32 addresses of the server
@@ -138,11 +162,11 @@ func NewSamRTCServerFromOptions(opts ...func(*SamRTCServer) error) (*SamRTCServe
 	if s.publishStream, err = s.samConn.NewStreamSession(s.tunName, s.samKeys, s.rtcOptions()); err != nil {
 		return nil, err
 	}
-	s.Log("Stream session established")
+	s.Log("SAM stream session established")
 	if s.publishListen, err = s.publishStream.Listen(); err != nil {
 		return nil, err
 	}
-	s.Log("Listener created")
+	s.Log("SAM Listener created")
 	log.Println(s.GetServerAddresses())
 	return &s, nil
 }

@@ -30,6 +30,7 @@ func main(){
 		":port of the SAM bridge")
     samTunName := flag.String("name", "serverTun",
 		":port of the SAM bridge")
+    verbosity := flag.Bool("verbose", false, "enable verbose output")
     flag.Var(&whitelistAddrs, "addrs", "Subscription URL(Can be specified multiple times)")
     flag.Parse()
 
@@ -38,6 +39,7 @@ func main(){
         samrtc.SetSamPort(*samPortString),
         samrtc.SetSamTunName(*samTunName),
         samrtc.SetSamWhitelist(whitelistAddrs.String()),
+        samrtc.SetSamVerbose(*verbosity),
         ); err != nil {
             log.Fatal(err.Error())
     }else{
