@@ -44,11 +44,12 @@ func main(){
         samrtc.SetHostLocalHost(*localHost),
         samrtc.SetHostLocalPort(*localPort),
         samrtc.SetHostSamTunName(*samTunName),
-        samrtc.SetHostSamWhitelist(whitelistAddrs.String()),
+        //samrtc.SetHostSamWhitelist(whitelistAddrs.String()),
         samrtc.SetHostSamVerbose(*verbosity),
         ); err != nil {
             log.Fatal(err.Error())
     }else{
+        //defer samforwarder.Close()
         samForwarder.Serve()
     }
 

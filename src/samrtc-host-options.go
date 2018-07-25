@@ -74,19 +74,6 @@ func SetHostSamPortInt(v int) func(*SamRTCHost) error {
 	}
 }
 
-//SetHostSamWhitelist adds a destination to the samRTC Whitelist.
-func SetHostSamWhitelist(s string) func(*SamRTCHost) error {
-	return func(c *SamRTCHost) error {
-		for _, w := range c.whitelist {
-			if w == s {
-				return fmt.Errorf("Destination already exists on whitelist: %s", s)
-			}
-		}
-		c.whitelist = append(c.whitelist, s)
-		return nil
-	}
-}
-
 //SetHostSamVerbose sets the verbosity of the server
 func SetHostSamVerbose(b bool) func(*SamRTCHost) error {
 	return func(c *SamRTCHost) error {
