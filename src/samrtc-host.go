@@ -89,8 +89,8 @@ func NewSamRTCHostFromOptions(opts ...func(*SamRTCHost) error) (*SamRTCHost, err
 	return &s, nil
 }
 
-//NewSamRTCHostFromOptions creates a new server with functional options
-func NewEmbedSamRTCHostFromOptions(opts ...func(*SamRTCHost) error) (error) {
+//NewEmbedSamRTCHostFromOptions creates a new server with functional options
+func NewEmbedSamRTCHostFromOptions(opts ...func(*SamRTCHost) error) error {
 	var s SamRTCHost
 	s.host = "127.0.0.1"
 	s.port = "7681"
@@ -112,8 +112,8 @@ func NewEmbedSamRTCHostFromOptions(opts ...func(*SamRTCHost) error) (error) {
 		SetSamTunName(s.tunName),
 	)
 	if err != nil {
-		return  err
+		return err
 	}
-    go s.Serve()
+	go s.Serve()
 	return nil
 }
