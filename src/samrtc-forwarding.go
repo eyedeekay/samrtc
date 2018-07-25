@@ -70,9 +70,9 @@ func (s *SamRTCServer) Serve(whitelist ...string) error {
 		return err
 	}
 	s.Log("Server started.")
-    for {
-        go s.forward()
-    }
+	for {
+		go s.forward()
+	}
 }
 
 //GetServerAddresses returns the base64 and base32 addresses of the server
@@ -82,12 +82,33 @@ func (s *SamRTCServer) GetServerAddresses() (string, string) {
 
 //AddWhitelistDestination adds a client destination to the server whitelist
 func (s *SamRTCServer) AddWhitelistDestination(dest string) error {
+    var err error
 	for _, w := range s.whitelist {
 		if w == dest {
 			return fmt.Errorf("Destination already exists on whitelist: %s", dest)
 		}
 	}
+    s.Log("Re-initializing Stream Session")
+    s.Log("Closing listener")
+    if err = s.publishListen.Close(); err != nil {
+        return err
+    }
+    s.Log("Listener closed")
+    s.Log("Closing streamsession")
+    if err = s.publishStream.Close(); err != nil {
+        return err
+    }
+    s.Log("StreamSession closed")
+    s.Log("Re-Opening with new whitelist")
 	s.whitelist = append(s.whitelist, dest)
+    if s.publishStream, err = s.samConn.NewStreamSession(s.tunName, s.samKeys, s.rtcOptions()); err != nil {
+		return err
+	}
+	s.Log("SAM stream session established")
+	if s.publishListen, err = s.publishStream.Listen(); err != nil {
+		return err
+	}
+	s.Log("SAM Listener created")
 	return nil
 }
 
@@ -120,7 +141,7 @@ func (s *SamRTCServer) rtcOptions() []string {
 		"inbound.allowZeroHop=true", "outbound.allowZeroHop=true",
 		"inbound.lengthVariance=0", "outbound.lengthVariance=0",
 		"inbound.backupQuantity=4", "outbound.backupQuantity=4",
-		"inbound.quantity=15", "outbound.quantity=15",
+		"inbound.quantity=4", "outbound.quantity=4",
 		"i2cp.reduceIdleTime=300000", "i2cp.reduceOnIdle=true", "i2cp.reduceQuantity=2",
 		"i2cp.closeIdleTime=1200000", "i2cp.closeOnIdle=true",
 		"i2cp.encryptLeaseSet=true", "i2cp.enableAccessList=true", s.getWhitelist(),

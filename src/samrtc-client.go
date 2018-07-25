@@ -11,7 +11,6 @@ import (
 	"github.com/kpetku/sam3"
 )
 
-
 //SamRTCClient is supposed to be a convenient way to embed this into other applications.
 type SamRTCClient struct {
 	samHost string

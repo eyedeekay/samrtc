@@ -5,6 +5,7 @@ deps:
 	go get -u github.com/kpetku/sam3
 
 build:
+	mkdir -p bin
 	cd src/main && go build -o "$(PWD)/bin/samrtc"
 
 noopts: build
