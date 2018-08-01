@@ -17,6 +17,14 @@ func SetHostSamHost(s string) func(*SamRTCHost) error {
 	}
 }
 
+//SetHostSamIniFile sets the location of the ini file to use
+func SetHostSamIniFile(s string) func(*SamRTCHost) error {
+	return func(c *SamRTCHost) error {
+		c.iniFile = s
+		return nil
+	}
+}
+
 //SetHostLocalHost sets the host of the whitelist-managing server
 func SetHostLocalHost(s string) func(*SamRTCHost) error {
 	return func(c *SamRTCHost) error {

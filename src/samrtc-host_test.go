@@ -17,6 +17,7 @@ func TestSamRTCHost(t *testing.T) {
 		SetHostLocalPort("7681"),
 		SetHostSamTunName("testSamTun"),
 		SetHostSamVerbose(true),
+		SetHostSamIniFile("../etc/samrtc/samrtc.conf"),
 	); err != nil {
 		t.Fatal(err.Error())
 	}

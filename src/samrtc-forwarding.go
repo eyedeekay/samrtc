@@ -10,16 +10,18 @@ import (
 
 import (
 	"github.com/eyedeekay/sam-forwarder"
+	"github.com/eyedeekay/sam-forwarder/config"
 )
 
 //SamRTCServer is an object representing a server who's sole purpose is to make
 //the SAM bridge accessible in the browser.
 type SamRTCServer struct {
-    server *samforwarder.SAMForwarder
+	server *samforwarder.SAMForwarder
 
 	samHost string
 	samPort string
 	tunName string
+	iniFile string
 
 	verbose bool
 
@@ -37,9 +39,8 @@ func (s *SamRTCServer) Serve(whitelist ...string) error {
 	if err = s.checkWhitelist(); err != nil {
 		log.Fatal(err.Error())
 	}
-	_, base32 := s.GetServerAddresses()
-	s.Log("Starting server:", s.tunName+":", base32)
-    return nil
+	go s.server.Serve()
+	return nil
 }
 
 //GetServerAddresses returns the base64 and base32 addresses of the server
@@ -49,7 +50,7 @@ func (s *SamRTCServer) GetServerAddresses() (string, string) {
 
 //AddWhitelistDestination adds a client destination to the server whitelist
 func (s *SamRTCServer) AddWhitelistDestination(dest string) error {
-	var err error
+	//var err error
 	for _, w := range s.whitelist {
 		if w == dest {
 			return fmt.Errorf("Destination already exists on whitelist: %s", dest)
@@ -82,21 +83,6 @@ func (s *SamRTCServer) checkWhitelist() error {
 	return nil
 }
 
-func (s *SamRTCServer) rtcOptions() []string {
-	rtcOptions := []string{
-		"inbound.length=0", "outbound.length=0",
-		"inbound.allowZeroHop=true", "outbound.allowZeroHop=true",
-		"inbound.lengthVariance=0", "outbound.lengthVariance=0",
-		"inbound.backupQuantity=4", "outbound.backupQuantity=4",
-		"inbound.quantity=4", "outbound.quantity=4",
-		"i2cp.reduceIdleTime=300000", "i2cp.reduceOnIdle=true", "i2cp.reduceQuantity=2",
-		"i2cp.closeIdleTime=1200000", "i2cp.closeOnIdle=true",
-		"i2cp.dontPublishLeaseSet=false", "i2cp.encryptLeaseSet=true",
-		"i2cp.enableAccessList=true", s.getWhitelist(),
-	}
-	return rtcOptions
-}
-
 func (s *SamRTCServer) samAddress() string {
 	return s.samHost + ":" + s.samPort
 }
@@ -114,13 +100,16 @@ func NewSamRTCServerFromOptions(opts ...func(*SamRTCServer) error) (*SamRTCServe
 	s.samHost = "127.0.0.1"
 	s.samPort = "7656"
 	s.tunName = "serverTun"
+	s.iniFile = "/etc/samrtc/samrtc.conf"
 	s.verbose = false
 	for _, o := range opts {
 		if err := o(&s); err != nil {
 			return &s, err
 		}
 	}
-
+	if s.server, err = i2ptunconf.NewSAMForwarderFromConfig(s.iniFile, s.samHost, s.samPort); err != nil {
+		return nil, err
+	}
 	log.Println(s.GetServerAddresses())
 	return &s, nil
 }

@@ -17,10 +17,18 @@ func SetSamHost(s string) func(*SamRTCServer) error {
 	}
 }
 
-//SetSamTunName sets the host of the client's SAM bridge
+//SetSamTunName sets the name of the tunnel used by SAM
 func SetSamTunName(s string) func(*SamRTCServer) error {
 	return func(c *SamRTCServer) error {
 		c.tunName = s
+		return nil
+	}
+}
+
+//SetSamIniFile sets the path of the file to load settings from
+func SetSamIniFile(s string) func(*SamRTCServer) error {
+	return func(c *SamRTCServer) error {
+		c.iniFile = s
 		return nil
 	}
 }

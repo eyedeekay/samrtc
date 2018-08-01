@@ -13,6 +13,7 @@ type SamRTCHost struct {
 
 	samHost string
 	samPort string
+	iniFile string
 
 	serve   bool
 	tunName string
@@ -110,6 +111,7 @@ func NewEmbedSamRTCHostFromOptions(opts ...func(*SamRTCHost) error) error {
 		SetSamPort(s.samPort),
 		SetSamVerbose(s.verbose),
 		SetSamTunName(s.tunName),
+		SetSamIniFile(s.iniFile),
 	)
 	if err != nil {
 		return err

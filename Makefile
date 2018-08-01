@@ -4,6 +4,7 @@ GOPATH=$(PWD)/.go
 deps:
 	go get -u github.com/kpetku/sam3
 	go get -u github.com/eyedeekay/sam-forwarder
+	go get -u github.com/eyedeekay/sam-forwarder/config
 
 build:
 	mkdir -p bin

@@ -9,6 +9,7 @@ func TestCreateSamHTTPOptionsSetSamHost(t *testing.T) {
 		SetSamHost("127.0.0.1"),
 		SetSamTunName("SamHostTest"),
 		SetSamVerbose(true),
+		SetSamIniFile("../etc/samrtc/samrtc.conf"),
 	)
 	if e != nil {
 		t.Fatal("sam-http-options_test.go Host setting error", e.Error())
@@ -20,6 +21,7 @@ func TestCreateSamHTTPOptionsSetSamPort(t *testing.T) {
 		SetSamPort("7656"),
 		SetSamTunName("SamPortTest"),
 		SetSamVerbose(true),
+		SetSamIniFile("../etc/samrtc/samrtc.conf"),
 	)
 	if e != nil {
 		t.Fatal("sam-http-options_test.go Port setting error from String", e.Error())
@@ -31,6 +33,7 @@ func TestCreateSamHTTPOptionsSetSamPortInt(t *testing.T) {
 		SetSamPortInt(7656),
 		SetSamTunName("SamPortIntTest"),
 		SetSamVerbose(true),
+		SetSamIniFile("../etc/samrtc/samrtc.conf"),
 	)
 	if e != nil {
 		t.Fatal("sam-http-options_test.go Port setting error from Int", e.Error())
@@ -42,6 +45,7 @@ func TestCreateSamHTTPOptionsSetSamWhitelist(t *testing.T) {
 		SetSamWhitelist("THISISNOTAREALDESTINATIONBUTABASE64WOULDNORMALLYGOHERE"),
 		SetSamTunName("SamWhitelistTest"),
 		SetSamVerbose(true),
+		SetSamIniFile("../etc/samrtc/samrtc.conf"),
 	)
 	if e != nil {
 		t.Fatal("sam-http-options_test.go Port setting error from String", e.Error())
@@ -52,6 +56,7 @@ func TestNewSamRTC(t *testing.T) {
 	samrtc, err := NewSamRTCServerFromOptions(
 		SetSamVerbose(true),
 		SetSamWhitelist("THISISNOTAREALDESTINATIONBUTABASE64WOULDNORMALLYGOHERE"),
+		SetSamIniFile("../etc/samrtc/samrtc.conf"),
 	)
 	if err != nil {
 		t.Fatal(err.Error())
