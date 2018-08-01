@@ -12,8 +12,8 @@ whitelisting for the local destination.
 
 ## Status
 
-It doesn't work yet. Actually it might work, but it requires additional
-configuration.
+Broke the absolute shit out of it in order to make it much easier to work with
+later.
 
 ## About
 

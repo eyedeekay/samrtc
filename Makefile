@@ -3,6 +3,7 @@ GOPATH=$(PWD)/.go
 
 deps:
 	go get -u github.com/kpetku/sam3
+	go get -u github.com/eyedeekay/sam-forwarder
 
 build:
 	mkdir -p bin

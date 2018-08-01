@@ -2,54 +2,28 @@ package samrtc
 
 import (
 	"fmt"
-	"io"
+	//"io"
 	"log"
-	"net"
+	//"net"
 	"strings"
 )
 
 import (
-	"github.com/kpetku/sam3"
+	"github.com/eyedeekay/sam-forwarder"
 )
 
 //SamRTCServer is an object representing a server who's sole purpose is to make
 //the SAM bridge accessible in the browser.
 type SamRTCServer struct {
+    server *samforwarder.SAMForwarder
+
 	samHost string
 	samPort string
 	tunName string
 
 	verbose bool
 
-	samConn *sam3.SAM
-	samKeys sam3.I2PKeys
-
-	publishStream     *sam3.StreamSession
-	publishListen     *sam3.StreamListener
-	publishConnection net.Conn
-
-	localConnection net.Conn
-
 	whitelist []string
-}
-
-func (s *SamRTCServer) forward() error {
-	var err error
-	if s.localConnection, err = net.Dial("tcp", s.samAddress()); err != nil {
-		return err
-	}
-	s.Log("Dialed local SAM bridge for forwarding")
-	go func() {
-		defer s.localConnection.Close()
-		defer s.publishConnection.Close()
-		io.Copy(s.localConnection, s.publishConnection)
-	}()
-	go func() {
-		defer s.localConnection.Close()
-		defer s.publishConnection.Close()
-		io.Copy(s.publishConnection, s.localConnection)
-	}()
-	return nil
 }
 
 //Serve a the specified SAM port on an i2p destination
@@ -65,19 +39,12 @@ func (s *SamRTCServer) Serve(whitelist ...string) error {
 	}
 	_, base32 := s.GetServerAddresses()
 	s.Log("Starting server:", s.tunName+":", base32)
-	s.publishConnection, err = s.publishListen.Accept()
-	if err != nil {
-		return err
-	}
-	s.Log("Server started.")
-	for {
-		go s.forward()
-	}
+    return nil
 }
 
 //GetServerAddresses returns the base64 and base32 addresses of the server
 func (s *SamRTCServer) GetServerAddresses() (string, string) {
-	return s.samKeys.Addr().Base64(), s.samKeys.Addr().Base32()
+	return s.server.SamKeys.Addr().Base64(), s.server.SamKeys.Addr().Base32()
 }
 
 //AddWhitelistDestination adds a client destination to the server whitelist
@@ -88,27 +55,7 @@ func (s *SamRTCServer) AddWhitelistDestination(dest string) error {
 			return fmt.Errorf("Destination already exists on whitelist: %s", dest)
 		}
 	}
-	s.Log("Re-initializing Stream Session")
-	s.Log("Closing listener")
-	if err = s.publishListen.Close(); err != nil {
-		return err
-	}
-	s.Log("Listener closed")
-	s.Log("Closing streamsession")
-	if err = s.publishStream.Close(); err != nil {
-		return err
-	}
-	s.Log("StreamSession closed")
-	s.Log("Re-Opening with new whitelist")
-	s.whitelist = append(s.whitelist, dest)
-	if s.publishStream, err = s.samConn.NewStreamSession(s.tunName, s.samKeys, s.rtcOptions()); err != nil {
-		return err
-	}
-	s.Log("SAM stream session established")
-	if s.publishListen, err = s.publishStream.Listen(); err != nil {
-		return err
-	}
-	s.Log("SAM Listener created")
+
 	return nil
 }
 
@@ -144,7 +91,7 @@ func (s *SamRTCServer) rtcOptions() []string {
 		"inbound.quantity=4", "outbound.quantity=4",
 		"i2cp.reduceIdleTime=300000", "i2cp.reduceOnIdle=true", "i2cp.reduceQuantity=2",
 		"i2cp.closeIdleTime=1200000", "i2cp.closeOnIdle=true",
-		"i2cp.dontPublishLeaseSet=true", "i2cp.encryptLeaseSet=true",
+		"i2cp.dontPublishLeaseSet=false", "i2cp.encryptLeaseSet=true",
 		"i2cp.enableAccessList=true", s.getWhitelist(),
 	}
 	return rtcOptions
@@ -173,22 +120,7 @@ func NewSamRTCServerFromOptions(opts ...func(*SamRTCServer) error) (*SamRTCServe
 			return &s, err
 		}
 	}
-	if s.samConn, err = sam3.NewSAM(s.samAddress()); err != nil {
-		return nil, err
-	}
-	s.Log("SAM Bridge connection established")
-	if s.samKeys, err = s.samConn.NewKeys(); err != nil {
-		return nil, err
-	}
-	s.Log("Destination keys generated, tunnel name:", s.tunName)
-	if s.publishStream, err = s.samConn.NewStreamSession(s.tunName, s.samKeys, s.rtcOptions()); err != nil {
-		return nil, err
-	}
-	s.Log("SAM stream session established")
-	if s.publishListen, err = s.publishStream.Listen(); err != nil {
-		return nil, err
-	}
-	s.Log("SAM Listener created")
+
 	log.Println(s.GetServerAddresses())
 	return &s, nil
 }
