@@ -16,6 +16,7 @@ import (
 //SamRTCServer is an object representing a server who's sole purpose is to make
 //the SAM bridge accessible in the browser.
 type SamRTCServer struct {
+	config *i2ptunconf.Conf
 	server *samforwarder.SAMForwarder
 
 	samHost string
@@ -107,7 +108,10 @@ func NewSamRTCServerFromOptions(opts ...func(*SamRTCServer) error) (*SamRTCServe
 			return &s, err
 		}
 	}
-	if s.server, err = i2ptunconf.NewSAMForwarderFromConfig(s.iniFile, s.samHost, s.samPort); err != nil {
+	if s.config, err = i2ptunconf.NewI2PTunConf(s.iniFile); err != nil {
+		return nil, err
+	}
+	if s.server, err = i2ptunconf.NewSAMForwarderFromConf(s.config); err != nil {
 		return nil, err
 	}
 	log.Println(s.GetServerAddresses())

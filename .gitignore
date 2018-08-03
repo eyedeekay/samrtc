@@ -1,3 +1,5 @@
 .go
 test.log
 bin/*
+*i2pkeys
+*/*.i2pkeys
