@@ -83,6 +83,7 @@ func NewSamRTCHostFromOptions(opts ...func(*SamRTCHost) error) (*SamRTCHost, err
 		SetSamPort(s.samPort),
 		SetSamVerbose(s.verbose),
 		SetSamTunName(s.tunName),
+		SetSamIniFile(s.iniFile),
 	)
 	if err != nil {
 		return nil, err
