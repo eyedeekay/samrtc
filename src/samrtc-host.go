@@ -74,6 +74,7 @@ func NewSamRTCHostFromOptions(opts ...func(*SamRTCHost) error) (*SamRTCHost, err
 	s.tunName = "SAMTun"
 	s.verbose = false
 	s.serve = false
+    s.iniFile = "etc/samrtc/samrtc.conf"
 	for _, o := range opts {
 		if err := o(&s); err != nil {
 			return &s, err
@@ -104,6 +105,7 @@ func NewEmbedSamRTCHostFromOptions(opts ...func(*SamRTCHost) error) error {
 	s.tunName = "SAMTun"
 	s.verbose = false
 	s.serve = false
+    s.iniFile = "etc/samrtc/samrtc.conf"
 	for _, o := range opts {
 		if err := o(&s); err != nil {
 			return err
