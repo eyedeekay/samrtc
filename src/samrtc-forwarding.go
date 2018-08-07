@@ -57,7 +57,7 @@ func (s *SamRTCServer) AddWhitelistDestination(dest string) error {
 			return fmt.Errorf("Destination already exists on whitelist: %s", dest)
 		}
 	}
-
+	s.whitelist = append(s.whitelist, dest)
 	return nil
 }
 
@@ -113,6 +113,9 @@ func NewSamRTCServerFromOptions(opts ...func(*SamRTCServer) error) (*SamRTCServe
 	}
 	if s.server, err = i2ptunconf.NewSAMForwarderFromConf(s.config); err != nil {
 		return nil, err
+	}
+	for _, r := range s.whitelist {
+		s.AddWhitelistDestination(r)
 	}
 	log.Println(s.GetServerAddresses())
 	return &s, nil

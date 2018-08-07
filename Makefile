@@ -26,3 +26,4 @@ test: fmt lint vet
 
 clean:
 	rm -f "$(PWD)/bin/samrtc"
+	find . -name *.i2pkeys -exec rm {} \;

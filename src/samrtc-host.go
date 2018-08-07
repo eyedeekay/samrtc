@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 )
 
 //SamRTCHost is a server that manages a whitelist-managed SAM over i2p destination.
@@ -15,9 +16,10 @@ type SamRTCHost struct {
 	samPort string
 	iniFile string
 
-	serve   bool
-	tunName string
-	verbose bool
+	serve     bool
+	tunName   string
+	verbose   bool
+	whitelist []string
 
 	forwarder *SamRTCServer
 }
@@ -45,9 +47,9 @@ func (s *SamRTCHost) Serve() {
 		s.serve = true
 		fmt.Fprint(w, "Added Whitelist Member:", r.URL.Path)
 	})
-	http.HandleFunc("/base32", func(w http.ResponseWriter, r *http.Request) {
-		_, b := s.forwarder.GetServerAddresses()
-		fmt.Fprint(w, b)
+	http.HandleFunc("/addr", func(w http.ResponseWriter, r *http.Request) {
+		a, b := s.forwarder.GetServerAddresses()
+		fmt.Fprint(w, a + "," + b)
 	})
 
 	log.Println("serving on", s.host, ":", s.port)
@@ -84,6 +86,7 @@ func NewSamRTCHostFromOptions(opts ...func(*SamRTCHost) error) (*SamRTCHost, err
 		SetSamVerbose(s.verbose),
 		SetSamTunName(s.tunName),
 		SetSamIniFile(s.iniFile),
+		SetSamWhitelist(strings.Join(s.whitelist, ",")),
 	)
 	if err != nil {
 		return nil, err
@@ -113,6 +116,7 @@ func NewEmbedSamRTCHostFromOptions(opts ...func(*SamRTCHost) error) error {
 		SetSamVerbose(s.verbose),
 		SetSamTunName(s.tunName),
 		SetSamIniFile(s.iniFile),
+		SetSamWhitelist(strings.Join(s.whitelist, ",")),
 	)
 	if err != nil {
 		return err

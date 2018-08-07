@@ -3,6 +3,7 @@ package samrtc
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	//"time"
 )
 
@@ -60,14 +61,22 @@ func SetSamPortInt(v int) func(*SamRTCServer) error {
 }
 
 //SetSamWhitelist adds a destination to the samRTC Whitelist.
-func SetSamWhitelist(s string) func(*SamRTCServer) error {
+func SetSamWhitelist(x string) func(*SamRTCServer) error {
 	return func(c *SamRTCServer) error {
-		for _, w := range c.whitelist {
-			if w == s {
-				return fmt.Errorf("Destination already exists on whitelist: %s", s)
+		if x == "" {
+			return nil
+		}
+		s := strings.Split(x, ",")
+		if len(s) > 0 {
+			for _, i := range s {
+				for _, j := range c.whitelist {
+					if j == i {
+						return nil
+					}
+				}
+				c.whitelist = append(c.whitelist, i)
 			}
 		}
-		c.whitelist = append(c.whitelist, s)
 		return nil
 	}
 }

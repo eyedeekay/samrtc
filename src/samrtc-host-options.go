@@ -3,6 +3,7 @@ package samrtc
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	//"time"
 )
 
@@ -86,6 +87,27 @@ func SetHostSamPortInt(v int) func(*SamRTCHost) error {
 func SetHostSamVerbose(b bool) func(*SamRTCHost) error {
 	return func(c *SamRTCHost) error {
 		c.verbose = b
+		return nil
+	}
+}
+
+//SetHostSamWhitelist adds a new member to the list of base64 keys as a whitelist.
+func SetHostSamWhitelist(x string) func(*SamRTCHost) error {
+	return func(c *SamRTCHost) error {
+		if x == "" {
+			return nil
+		}
+		s := strings.Split(x, ",")
+		if len(s) > 0 {
+			for _, i := range s {
+				for _, j := range c.whitelist {
+					if j == i {
+						return nil
+					}
+				}
+				c.whitelist = append(c.whitelist, i)
+			}
+		}
 		return nil
 	}
 }
