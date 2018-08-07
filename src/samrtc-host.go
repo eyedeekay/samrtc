@@ -102,7 +102,7 @@ func NewEmbedSamRTCHostFromOptions(opts ...func(*SamRTCHost) error) error {
 	s.port = "7681"
 	s.samHost = "127.0.0.1"
 	s.samPort = "7656"
-	s.tunName = "SAMTun"
+	s.tunName = "samrtcTun"
 	s.verbose = false
 	s.serve = false
     s.iniFile = "etc/samrtc/samrtc.conf"

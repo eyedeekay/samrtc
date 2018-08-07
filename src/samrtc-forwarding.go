@@ -101,7 +101,7 @@ func NewSamRTCServerFromOptions(opts ...func(*SamRTCServer) error) (*SamRTCServe
 	s.samHost = "127.0.0.1"
 	s.samPort = "7656"
 	s.tunName = "samrtcTun"
-	s.iniFile = "/etc/samrtc/samrtc.conf"
+	s.iniFile = "etc/samrtc/samrtc.conf"
 	s.verbose = false
 	for _, o := range opts {
 		if err := o(&s); err != nil {

@@ -8,9 +8,11 @@ deps:
 
 build:
 	mkdir -p bin
-	cd src/main && go build -o "$(PWD)/bin/samrtc"
+	cd src/main && go build -a -tags netgo -ldflags '-w -extldflags "-static"' -o "$(PWD)/bin/samrtc"
 
-noopts: build
+noopts:
+	mkdir -p bin
+	cd src/main && go build -o "$(PWD)/bin/samrtc"
 
 fmt:
 	gofmt -w src/*.go

@@ -34,6 +34,8 @@ func main() {
 		"host: of the local whitelisting control tunnel")
 	localPort := flag.String("lport", "7681",
 		":port of the local whitelisting control tunnel")
+    iniFile := flag.String("inifile", "etc/samrtc/samrtc.conf",
+		":port of the local whitelisting control tunnel")
 	verbosity := flag.Bool("verbose", false, "enable verbose output")
 	flag.Var(&whitelistAddrs, "addrs", "Subscription URL(Can be specified multiple times)")
 	flag.Parse()
@@ -46,6 +48,7 @@ func main() {
 		samrtc.SetHostSamTunName(*samTunName),
 		samrtc.SetHostSamWhitelist(whitelistAddrs.String()),
 		samrtc.SetHostSamVerbose(*verbosity),
+        samrtc.SetHostSamIniFile(*iniFile),
 	); err != nil {
 		log.Fatal(err.Error())
 	} else {
